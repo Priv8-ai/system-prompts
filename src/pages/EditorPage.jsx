@@ -16,7 +16,11 @@ const EditorPage = () => {
             <Editor />
           </div>
         </Panel>
-        <PanelResizeHandle className="w-2 bg-editor-line hover:bg-primary/30 transition-colors" />
+        <PanelResizeHandle className="w-1 hover:w-1.5 bg-editor-line hover:bg-primary transition-all">
+          {({ isHovered }) => (
+            <div className={`h-full w-full ${isHovered ? 'bg-primary' : 'bg-editor-line'}`}></div>
+          )}
+        </PanelResizeHandle>
         <Panel minSize={20}>
           <div className="h-full">
             <Chat />
