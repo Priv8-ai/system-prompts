@@ -15,21 +15,28 @@ body {
 
 /* Panel resize handle styling */
 [data-panel-resize-handle-id] {
-  transition: background-color 0.2s, width 0.2s;
+  background-color: rgba(30, 30, 30, 0.6);
+  transition: background-color 0.2s, width 0.2s, opacity 0.2s;
+  opacity: 0.6;
+  width: 1px;
 }
 
 [data-panel-resize-handle-id]:hover {
-  background-color: rgba(59, 130, 246, 0.3);
+  background-color: rgba(59, 130, 246, 0.7);
+  opacity: 1;
+  width: 3px;
 }
 
 [data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id] {
   width: 1px;
-  margin: 0 -1px;
+  margin: 0;
+  cursor: col-resize;
 }
 
 [data-panel-group-direction="vertical"] > [data-panel-resize-handle-id] {
   height: 1px;
-  margin: -1px 0;
+  margin: 0;
+  cursor: row-resize;
 }
 
 /* Code editor overrides */
@@ -47,7 +54,7 @@ body {
 
 /* Make the scrollbar thinner and more subtle */
 ::-webkit-scrollbar {
-  @apply w-2 h-2;
+  @apply w-1.5 h-1.5;
 }
 
 ::-webkit-scrollbar-track {
@@ -55,11 +62,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-editor-line rounded-full;
+  @apply bg-editor-line/70 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary/30;
+  @apply bg-primary/40;
 }
 
 /* Markdown rendering in chat */
@@ -109,4 +116,51 @@ body {
 
 .chat-message blockquote {
   @apply border-l-4 border-editor-line pl-3 italic my-2;
+}
+
+/* FileTree styling */
+.filetree-folder {
+  @apply flex items-center py-1 px-1 hover:bg-editor-bg/60 rounded cursor-pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filetree-folder-icon {
+  @apply mr-1 text-yellow-400;
+}
+
+.filetree-folder-name {
+  @apply text-sm font-medium;
+}
+
+.filetree-chevron {
+  @apply text-gray-500 transition-transform duration-200;
+}
+
+.filetree-chevron-expanded {
+  @apply rotate-90;
+}
+
+.filetree-file {
+  @apply flex items-center py-1 px-1 ml-5 hover:bg-editor-bg/60 rounded cursor-pointer transition-colors duration-150;
+}
+
+.filetree-file-icon {
+  @apply mr-1 text-blue-400;
+}
+
+.filetree-file-name {
+  @apply text-sm;
+}
+
+.filetree-actions {
+  @apply ml-auto flex items-center opacity-0 transition-opacity duration-200;
+}
+
+.filetree-folder:hover .filetree-actions,
+.filetree-file:hover .filetree-actions {
+  @apply opacity-100;
+}
+
+.filetree-action-btn {
+  @apply p-1 rounded-sm text-gray-400 hover:text-primary hover:bg-surface/60 transition-colors duration-150;
 }

@@ -28,7 +28,7 @@ const Editor = () => {
     // Set up editor options
     editor.updateOptions(editorOptions);
     
-    // Apply custom themes
+    // Register custom themes
     if (customThemes.length > 0) {
       customThemes.forEach(theme => {
         monaco.editor.defineTheme(theme.id, {
@@ -114,10 +114,10 @@ const Editor = () => {
         {openFiles.map((file) => (
           <div
             key={file.path}
-            className={`flex items-center px-3 py-2 min-w-0 max-w-xs border-r border-editor-line cursor-pointer ${
+            className={`flex items-center px-4 py-2 min-w-0 max-w-xs border-r border-editor-line cursor-pointer transition-colors ${
               activeFile && activeFile.path === file.path 
-                ? 'bg-background text-white' 
-                : 'text-gray-400 hover:bg-background/50'
+                ? 'bg-background text-white border-b-2 border-b-primary' 
+                : 'text-gray-400 hover:bg-background/50 hover:text-white'
             }`}
             onClick={() => {
               const content = useFileSystem().readFile(file.path);
@@ -128,7 +128,7 @@ const Editor = () => {
           >
             <span className="truncate text-sm">{file.name}</span>
             <button
-              className="ml-2 p-1 rounded-full hover:bg-surface"
+              className="ml-2 p-1 rounded-full hover:bg-surface transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 closeFile(file.path);
@@ -158,7 +158,7 @@ const Editor = () => {
         {/* Actions */}
         <div className="absolute bottom-4 right-4 flex space-x-2">
           <button
-            className="p-2 bg-primary rounded-full text-white shadow-lg hover:bg-primary/90"
+            className="p-2 bg-primary rounded-full text-white shadow-lg hover:bg-primary/90 transition-colors"
             onClick={handleSaveFile}
             title="Save file"
           >
@@ -167,7 +167,7 @@ const Editor = () => {
           
           {/* Diagnostics indicator */}
           {diagnostics.length > 0 && (
-            <div className="p-2 bg-yellow-500 rounded-full text-white shadow-lg">
+            <div className="p-2 bg-yellow-500 rounded-full text-white shadow-lg hover:bg-yellow-500/90 transition-colors" title="Warnings/errors detected">
               <FiAlertTriangle />
             </div>
           )}

@@ -16,9 +16,17 @@ const EditorPage = () => {
             <Editor />
           </div>
         </Panel>
-        <PanelResizeHandle className="w-1 hover:w-1.5 bg-editor-line hover:bg-primary transition-all">
+        <PanelResizeHandle>
           {({ isHovered }) => (
-            <div className={`h-full w-full ${isHovered ? 'bg-primary' : 'bg-editor-line'}`}></div>
+            <div 
+              className="h-full" 
+              style={{
+                backgroundColor: isHovered ? 'rgba(59, 130, 246, 0.7)' : 'rgba(30, 30, 30, 0.6)',
+                width: isHovered ? '3px' : '1px',
+                transition: 'background-color 0.2s, width 0.2s',
+                opacity: isHovered ? 1 : 0.6
+              }}
+            ></div>
           )}
         </PanelResizeHandle>
         <Panel minSize={20}>

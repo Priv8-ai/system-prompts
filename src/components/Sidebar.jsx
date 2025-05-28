@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFileSystem } from '../contexts/FileSystemContext';
 import { useEditor } from '../contexts/EditorContext';
-import { FiFolder, FiFolderPlus, FiFile, FiFilePlus, FiChevronDown, FiChevronRight, FiTrash2, FiEdit } from 'react-icons/fi';
+import { FiFolder, FiFolderPlus, FiFile, FiFilePlus, FiChevronRight, FiTrash2, FiEdit } from 'react-icons/fi';
 
 const Sidebar = () => {
   const { currentPath, directories, getItemsInDirectory, createDirectory, createFile, readFile } = useFileSystem();
@@ -55,40 +55,69 @@ const Sidebar = () => {
     setNewItemParentDir('');
   };
 
+  // Function to get file icon based on file extension
+  const getFileIcon = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch(extension) {
+      case 'js':
+      case 'jsx':
+        return 'text-yellow-400';
+      case 'ts':
+      case 'tsx':
+        return 'text-blue-500';
+      case 'css':
+        return 'text-blue-400';
+      case 'html':
+        return 'text-orange-400';
+      case 'json':
+        return 'text-green-300';
+      case 'md':
+        return 'text-purple-400';
+      default:
+        return 'text-blue-400';
+    }
+  };
+
   const renderTree = (dirPath, level = 0) => {
     const { files, directories: subDirs } = getItemsInDirectory(dirPath);
     const isExpanded = expandedDirs[dirPath];
     
     return (
-      <div className="ml-4">
+      <div className={`ml-${level > 0 ? '4' : '0'}`}>
         {/* Render directories */}
         {subDirs.map((dir) => (
           <div key={dir.path}>
             <div 
-              className="flex items-center py-1 hover:bg-surface/80 cursor-pointer"
+              className="filetree-folder"
               onClick={() => toggleDir(dir.path)}
             >
-              <span className="mr-1">
-                {isExpanded ? <FiChevronDown size={14} /> : <FiChevronRight size={14} />}
+              <span className="filetree-chevron mr-1">
+                <FiChevronRight 
+                  size={14} 
+                  className={`${isExpanded ? 'filetree-chevron-expanded' : ''}`}
+                  style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                />
               </span>
-              <FiFolder className="mr-1 text-yellow-400" />
-              <span className="truncate">{dir.name}</span>
-              <div className="ml-auto flex">
+              <FiFolder className="filetree-folder-icon" />
+              <span className="filetree-folder-name">{dir.name}</span>
+              <div className="filetree-actions">
                 <button 
-                  className="p-1 opacity-0 group-hover:opacity-100 hover:text-primary"
+                  className="filetree-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     startCreatingItem('directory', dir.path);
                   }}
+                  title="New Folder"
                 >
                   <FiFolderPlus size={14} />
                 </button>
                 <button 
-                  className="p-1 opacity-0 group-hover:opacity-100 hover:text-primary"
+                  className="filetree-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     startCreatingItem('file', dir.path);
                   }}
+                  title="New File"
                 >
                   <FiFilePlus size={14} />
                 </button>
@@ -102,17 +131,17 @@ const Sidebar = () => {
         {files.map((file) => (
           <div 
             key={file.path}
-            className="flex items-center py-1 pl-4 hover:bg-surface/80 cursor-pointer"
+            className="filetree-file"
             onClick={() => handleOpenFile(file.path)}
           >
-            <FiFile className="mr-1 text-blue-400" />
-            <span className="truncate">{file.name}</span>
+            <FiFile className={`filetree-file-icon ${getFileIcon(file.name)}`} />
+            <span className="filetree-file-name">{file.name}</span>
           </div>
         ))}
         
         {/* New item creation form */}
         {newItemType && newItemParentDir === dirPath && (
-          <div className="flex items-center py-1 pl-4">
+          <div className={`flex items-center py-1 ${level > 0 ? 'ml-5' : 'ml-0'} px-1`}>
             {newItemType === 'directory' ? 
               <FiFolder className="mr-1 text-yellow-400" /> : 
               <FiFile className="mr-1 text-blue-400" />
@@ -126,13 +155,13 @@ const Sidebar = () => {
                 if (e.key === 'Escape') cancelCreating();
               }}
               placeholder={newItemType === 'directory' ? 'Folder name...' : 'File name...'}
-              className="bg-background border border-editor-line rounded px-1 py-0.5 text-sm w-full"
+              className="bg-editor-bg border border-editor-line rounded px-1 py-0.5 text-sm w-full"
               autoFocus
             />
-            <button onClick={handleCreateItem} className="ml-1 text-green-500">
+            <button onClick={handleCreateItem} className="ml-1 filetree-action-btn text-green-500">
               <FiEdit size={14} />
             </button>
-            <button onClick={cancelCreating} className="ml-1 text-red-500">
+            <button onClick={cancelCreating} className="ml-1 filetree-action-btn text-red-500">
               <FiTrash2 size={14} />
             </button>
           </div>
@@ -148,14 +177,16 @@ const Sidebar = () => {
           <h2 className="text-lg font-semibold">Files</h2>
           <div className="flex">
             <button 
-              className="p-1 hover:text-primary" 
+              className="filetree-action-btn" 
               onClick={() => startCreatingItem('directory', '/')}
+              title="New Folder"
             >
               <FiFolderPlus size={16} />
             </button>
             <button 
-              className="p-1 hover:text-primary"
+              className="filetree-action-btn"
               onClick={() => startCreatingItem('file', '/')}
+              title="New File"
             >
               <FiFilePlus size={16} />
             </button>
@@ -164,14 +195,18 @@ const Sidebar = () => {
         
         <div className="group">
           <div 
-            className="flex items-center py-1 hover:bg-surface/80 cursor-pointer"
+            className="filetree-folder"
             onClick={() => toggleDir('/')}
           >
-            <span className="mr-1">
-              {expandedDirs['/'] ? <FiChevronDown size={14} /> : <FiChevronRight size={14} />}
+            <span className="filetree-chevron mr-1">
+              <FiChevronRight 
+                size={14}
+                className={`${expandedDirs['/'] ? 'filetree-chevron-expanded' : ''}`}
+                style={{ transform: expandedDirs['/'] ? 'rotate(90deg)' : 'rotate(0deg)' }}
+              />
             </span>
-            <FiFolder className="mr-1 text-yellow-400" />
-            <span>Project Root</span>
+            <FiFolder className="filetree-folder-icon" />
+            <span className="filetree-folder-name">Project Root</span>
           </div>
           {expandedDirs['/'] && renderTree('/')}
         </div>
@@ -192,13 +227,13 @@ const Sidebar = () => {
                 if (e.key === 'Escape') cancelCreating();
               }}
               placeholder={newItemType === 'directory' ? 'Folder name...' : 'File name...'}
-              className="bg-background border border-editor-line rounded px-1 py-0.5 text-sm w-full"
+              className="bg-editor-bg border border-editor-line rounded px-1 py-0.5 text-sm w-full"
               autoFocus
             />
-            <button onClick={handleCreateItem} className="ml-1 text-green-500">
+            <button onClick={handleCreateItem} className="ml-1 filetree-action-btn text-green-500">
               <FiEdit size={14} />
             </button>
-            <button onClick={cancelCreating} className="ml-1 text-red-500">
+            <button onClick={cancelCreating} className="ml-1 filetree-action-btn text-red-500">
               <FiTrash2 size={14} />
             </button>
           </div>
