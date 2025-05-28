@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAI } from '../contexts/AIContext';
 import { useEditor } from '../contexts/EditorContext';
-import { FiSave, FiRefreshCw, FiCheckCircle, FiPlus, FiTrash2, FiEye } from 'react-icons/fi';
+import { FiSave, FiRefreshCw, FiCheckCircle, FiPlus, FiTrash2, FiEye, FiSettings } from 'react-icons/fi';
 
 const SettingsPage = () => {
   const { 
