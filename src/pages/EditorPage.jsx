@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SplitPane from 'react-split-pane';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import Editor from '../components/Editor';
 import Chat from '../components/Chat';
 
@@ -8,24 +8,21 @@ const EditorPage = () => {
   
   return (
     <div className="h-full overflow-hidden">
-      <SplitPane
-        split="vertical"
-        minSize={300}
-        defaultSize={`${verticalSplit}%`}
-        onChange={(size) => {
-          // Convert size to percentage
-          const containerWidth = document.querySelector('.Pane1').parentElement.offsetWidth;
-          const percentage = (size / containerWidth) * 100;
-          setVerticalSplit(percentage);
-        }}
-      >
-        <div className="h-full">
-          <Editor />
-        </div>
-        <div className="h-full">
-          <Chat />
-        </div>
-      </SplitPane>
+      <PanelGroup direction="horizontal" onLayout={(sizes) => {
+        setVerticalSplit(sizes[0]);
+      }}>
+        <Panel defaultSize={verticalSplit} minSize={20}>
+          <div className="h-full">
+            <Editor />
+          </div>
+        </Panel>
+        <PanelResizeHandle className="w-2 bg-gray-200 hover:bg-gray-300 transition-colors" />
+        <Panel minSize={20}>
+          <div className="h-full">
+            <Chat />
+          </div>
+        </Panel>
+      </PanelGroup>
     </div>
   );
 };
