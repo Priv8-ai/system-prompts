@@ -49,7 +49,8 @@ class BaseAIAdapter {
 class OllamaAdapter extends BaseAIAdapter {
   constructor(provider) {
     super(provider);
-    this.baseUrl = provider.url || 'http://localhost:11434';
+    // Use proxy path instead of direct connection to avoid CORS issues
+    this.baseUrl = '/api/ollama';
   }
   
   formatMessages(messages) {

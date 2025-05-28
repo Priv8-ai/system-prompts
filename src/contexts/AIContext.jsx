@@ -97,6 +97,7 @@ export const AIProvider = ({ children }) => {
     
     try {
       const models = [];
+      const failedProviders = [];
       
       // Fetch models from each enabled provider
       for (const provider of modelProviders) {
@@ -107,7 +108,7 @@ export const AIProvider = ({ children }) => {
             models.push(...providerModels);
           } catch (err) {
             console.error(`Failed to fetch models from ${provider.name}:`, err);
-            setError((prev) => prev ? `${prev}, ${provider.name}` : `Failed to fetch models from: ${provider.name}`);
+            failedProviders.push(provider.name);
           }
         }
       }
@@ -117,6 +118,11 @@ export const AIProvider = ({ children }) => {
       // Set first model as current if none selected
       if (!currentModel && models.length > 0) {
         setCurrentModel(models[0]);
+      }
+      
+      // Set error message if any providers failed
+      if (failedProviders.length > 0) {
+        setError(`Failed to fetch models from: ${failedProviders.join(', ')}`);
       }
     } catch (err) {
       console.error('Error refreshing models:', err);
