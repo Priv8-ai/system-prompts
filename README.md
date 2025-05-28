@@ -1,73 +1,93 @@
-# **FULL v0, Cursor, Manus, Same.dev, Lovable, Devin, Replit Agent, Windsurf Agent & VSCode Agent (And other Open Sourced) System Prompts, Tools & AI Models**  
+# AI Code Editor
 
-(All the published system prompts are extracted by myself, except the already open sourced ones and Manus)
+A powerful code editor with AI capabilities, allowing you to chat with multiple AI models, analyze code, debug issues, and find vulnerabilities.
 
-🚀 **I managed to obtain FULL official v0, Manus, Cursor, Same.dev, Lovable, Devin, Replit Agent, Windsurf Agent & VSCode Agent system prompts and internal tools.**
+## Features
 
-📜 Over **6,500+ lines** of insights into their structure and functionality.  
+- 🧠 Multi-model AI support including:
+  - Ollama (local models)
+  - OpenAI
+  - Anthropic Claude
+  - Google Gemini
+  - DeepSeek
+- 📝 Modern code editor with syntax highlighting
+- 🔍 Code analysis and vulnerability detection
+- 🐛 Smart debugging suggestions
+- 🚀 Multiple specialized AI modes
+- 💾 File system management
+- 🌙 Dark mode interface
 
-## 📂 **Available Files**
-- **v0 Folder**  
-- **Manus Folder**
-- **Lovable Folder**
-- **Devin Folder**
-- **Same.dev Folder**
-- **Replit Folder**
-- **Windsurf Agent folder**
-- **VSCode (Copilot) Agent folder**
-- **Cursor Folder**
-- **Open Source prompts folder**
-  - Codex CLI
-  - Cline
-  - Bolt
-  - RooCode
+## Getting Started
 
----
+### Prerequisites
 
-## 🛡️ **Security Notice for AI Startups***
+- Node.js 18+ and npm
+- For Ollama support: [Ollama](https://ollama.ai) installed and running
+- API keys for cloud providers (OpenAI, Anthropic, etc.) as needed
 
-⚠️ **If you're an AI startup, make sure your data is secure.** Exposed prompts or AI models can easily become a target for hackers.
+### Installation
 
-🔐 **Interested in securing your AI systems?**  
-Check out **[ZeroLeaks](https://0leaks.vercel.app)**, a service designed to help startups **identify and secure** leaks in system instructions, internal tools, and model configurations. **Get a free AI security audit** to ensure your AI is protected from vulnerabilities.
+1. Clone the repository
+2. Install dependencies:
 
+```bash
+npm install
+```
 
-**The company is mine, this is NOT a 3rd party AD.*
----
+3. Start the development server:
 
-## 🛠 **Roadmap & Feedback**
+```bash
+npm run dev
+```
 
-🚨 **Note:** We no longer use GitHub issues for roadmap and feedback.  
-Please visit [System Prompts Roadmap & Feedback](https://systemprompts.featurebase.app/) to share your suggestions and track upcoming features.
+## Configuration
 
-🆕 **LATEST UPDATE:** 30/04/2025 
+### AI Providers
 
-## 📊 **Star History**
+Configure AI providers in the Settings page:
 
-<a href="https://www.star-history.com/#x1xhlol/system-prompts-and-models-of-ai-tools&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=x1xhlol/system-prompts-and-models-of-ai-tools&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=x1xhlol/system-prompts-and-models-of-ai-tools&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=x1xhlol/system-prompts-and-models-of-ai-tools&type=Date" />
- </picture>
-</a>
+- **Ollama**: Set the URL (default: http://localhost:11434)
+- **OpenAI, Anthropic, Gemini, DeepSeek**: Add your API keys
 
-## ❤️ Support the Project
+### Editor Settings
 
-If you find this collection valuable and appreciate the effort involved in obtaining and sharing these insights, please consider supporting the project. Your contribution helps keep this resource updated and allows for further exploration.
+Customize the editor in the Settings page:
+- Theme
+- Font size
+- Tab size
+- Word wrap
+- Minimap
 
-You can show your support via:
+## Usage
 
-*   **PayPal:** `lucknitelol@proton.me`
-*   **Cryptocurrency:**
-    *   **BTC:** `bc1q7zldmzjwspnaa48udvelwe6k3fef7xrrhg5625`
-    *   **LTC:** `LRWgqwEYDwqau1WeiTs6Mjg85NJ7m3fsdQ`
+1. Create or open files using the sidebar
+2. Edit code in the editor pane
+3. Chat with AI using the chat panel
+4. Select different AI roles for specialized assistance:
+   - Code Explainer
+   - Code Generator
+   - Debugger
+   - Security Auditor
+   - Code Refactorer
+   - Test Generator
 
-Thank you for your support! 🙏
+## Development
 
+### Project Structure
 
-## 🔗 **Connect With Me**  
-✖ **X:** [NotLucknite](https://x.com/NotLucknite)  
-💬 **Discord:** `x1xh`  
+- `/src` - Source code
+  - `/components` - React components
+  - `/contexts` - React context providers
+  - `/pages` - Page components
+  - `/services` - Service modules for AI and file operations
+  - `/utils` - Utility functions
 
-⭐ **Drop a star if you find this useful!**
+### Building for Production
+
+```bash
+npm run build
+```
+
+## License
+
+This project is licensed under the GPL-3.0 License - see the LICENSE.md file for details.
