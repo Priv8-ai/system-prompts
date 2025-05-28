@@ -16,7 +16,7 @@ const EditorPage = () => {
             <Editor />
           </div>
         </Panel>
-        <PanelResizeHandle className="w-2 bg-gray-200 hover:bg-gray-300 transition-colors" />
+        <PanelResizeHandle className="w-2 bg-editor-line hover:bg-primary/30 transition-colors" />
         <Panel minSize={20}>
           <div className="h-full">
             <Chat />
