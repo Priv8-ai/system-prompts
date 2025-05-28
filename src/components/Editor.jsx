@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { useEditor } from '../contexts/EditorContext';
 import { useFileSystem } from '../contexts/FileSystemContext';
-import { FiX, FiSave, FiCode, FiAlertTriangle } from 'react-icons/fi';
+import { FiX, FiSave, FiCode, FiAlertTriangle, FiSettings } from 'react-icons/fi';
 
 const Editor = () => {
   const { 
@@ -13,17 +13,32 @@ const Editor = () => {
     language, 
     diagnostics,
     editorOptions,
+    customThemes,
     closeFile,
     updateEditorContent
   } = useEditor();
   const { writeFile } = useFileSystem();
   const editorRef = useRef(null);
+  const [monacoInstance, setMonacoInstance] = useState(null);
   
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
+    setMonacoInstance(monaco);
     
     // Set up editor options
     editor.updateOptions(editorOptions);
+    
+    // Apply custom themes
+    if (customThemes.length > 0) {
+      customThemes.forEach(theme => {
+        monaco.editor.defineTheme(theme.id, {
+          base: theme.base,
+          inherit: true,
+          rules: [],
+          colors: theme.colors
+        });
+      });
+    }
     
     // Set up a model marker for diagnostics
     if (activeFile) {
@@ -45,6 +60,25 @@ const Editor = () => {
       }
     }
   };
+  
+  // Apply custom theme definitions when they change
+  useEffect(() => {
+    if (monacoInstance && customThemes.length > 0) {
+      customThemes.forEach(theme => {
+        monacoInstance.editor.defineTheme(theme.id, {
+          base: theme.base,
+          inherit: true,
+          rules: [],
+          colors: theme.colors
+        });
+      });
+      
+      // If current theme is a custom theme, reapply it
+      if (customThemes.some(theme => theme.id === editorTheme)) {
+        monacoInstance.editor.setTheme(editorTheme);
+      }
+    }
+  }, [customThemes, monacoInstance]);
   
   const handleEditorChange = (value) => {
     updateEditorContent(value);

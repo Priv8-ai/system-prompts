@@ -17,13 +17,20 @@ export const EditorProvider = ({ children }) => {
   const [editorTheme, setEditorTheme] = useState('vs-dark');
   const [language, setLanguage] = useState('javascript');
   const [diagnostics, setDiagnostics] = useState([]);
+  const [customThemes, setCustomThemes] = useState([]);
   const [editorOptions, setEditorOptions] = useState({
     minimap: { enabled: true },
     fontFamily: 'JetBrains Mono',
     fontSize: 14,
     tabSize: 2,
     automaticLayout: true,
-    wordWrap: 'on'
+    wordWrap: 'on',
+    lineNumbers: 'on',
+    scrollBeyondLastLine: false,
+    renderLineHighlight: 'all',
+    cursorBlinking: 'smooth',
+    cursorSmoothCaretAnimation: 'on',
+    smoothScrolling: true
   });
 
   // Load editor state from localStorage on component mount
@@ -49,6 +56,65 @@ export const EditorProvider = ({ children }) => {
         const savedEditorOptions = localStorage.getItem('editorOptions');
         if (savedEditorOptions) {
           setEditorOptions(JSON.parse(savedEditorOptions));
+        }
+        
+        const savedCustomThemes = localStorage.getItem('customThemes');
+        if (savedCustomThemes) {
+          setCustomThemes(JSON.parse(savedCustomThemes));
+        } else {
+          // Set default custom themes
+          const defaultThemes = [
+            {
+              id: 'monokai',
+              name: 'Monokai',
+              base: 'vs-dark',
+              colors: {
+                'editor.background': '#272822',
+                'editor.foreground': '#f8f8f2',
+                'editorLineNumber.foreground': '#8F908A',
+                'editor.selectionBackground': '#49483E',
+                'editor.lineHighlightBackground': '#3E3D32',
+              }
+            },
+            {
+              id: 'github',
+              name: 'GitHub',
+              base: 'vs',
+              colors: {
+                'editor.background': '#ffffff',
+                'editor.foreground': '#24292e',
+                'editorLineNumber.foreground': '#1b1f234d',
+                'editor.selectionBackground': '#0366d625',
+                'editor.lineHighlightBackground': '#f6f8fa',
+              }
+            },
+            {
+              id: 'nord',
+              name: 'Nord',
+              base: 'vs-dark',
+              colors: {
+                'editor.background': '#2e3440',
+                'editor.foreground': '#d8dee9',
+                'editorLineNumber.foreground': '#4c566a',
+                'editor.selectionBackground': '#434c5e',
+                'editor.lineHighlightBackground': '#3b4252',
+              }
+            },
+            {
+              id: 'dracula',
+              name: 'Dracula',
+              base: 'vs-dark',
+              colors: {
+                'editor.background': '#282a36',
+                'editor.foreground': '#f8f8f2',
+                'editorLineNumber.foreground': '#6272a4',
+                'editor.selectionBackground': '#44475a',
+                'editor.lineHighlightBackground': '#44475a',
+              }
+            }
+          ];
+          setCustomThemes(defaultThemes);
+          localStorage.setItem('customThemes', JSON.stringify(defaultThemes));
         }
       } catch (error) {
         console.error('Error loading editor state:', error);
@@ -78,6 +144,12 @@ export const EditorProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('editorOptions', JSON.stringify(editorOptions));
   }, [editorOptions]);
+  
+  useEffect(() => {
+    if (customThemes.length > 0) {
+      localStorage.setItem('customThemes', JSON.stringify(customThemes));
+    }
+  }, [customThemes]);
 
   const detectLanguage = (filename) => {
     if (!filename) return 'plaintext';
@@ -159,6 +231,24 @@ export const EditorProvider = ({ children }) => {
   const updateEditorTheme = (newTheme) => {
     setEditorTheme(newTheme);
   };
+  
+  const addCustomTheme = (theme) => {
+    setCustomThemes(prev => [...prev, theme]);
+  };
+  
+  const updateCustomTheme = (themeId, updates) => {
+    setCustomThemes(prev => 
+      prev.map(theme => 
+        theme.id === themeId 
+          ? { ...theme, ...updates } 
+          : theme
+      )
+    );
+  };
+  
+  const deleteCustomTheme = (themeId) => {
+    setCustomThemes(prev => prev.filter(theme => theme.id !== themeId));
+  };
 
   const runDiagnostics = (content, filePath) => {
     // This would be integrated with a real linting/diagnostic service
@@ -189,13 +279,17 @@ export const EditorProvider = ({ children }) => {
     language,
     diagnostics,
     editorOptions,
+    customThemes,
     openFile,
     closeFile,
     updateEditorContent,
     updateEditorOptions,
     updateEditorTheme,
     runDiagnostics,
-    detectLanguage
+    detectLanguage,
+    addCustomTheme,
+    updateCustomTheme,
+    deleteCustomTheme
   };
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;

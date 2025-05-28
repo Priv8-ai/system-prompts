@@ -13,42 +13,100 @@ body {
   overflow: hidden;
 }
 
-.Resizer {
-  background: #334155;
-  opacity: 0.2;
-  z-index: 1;
-  box-sizing: border-box;
-  background-clip: padding-box;
+/* Panel resize handle styling */
+[data-panel-resize-handle-id] {
+  transition: background-color 0.2s, width 0.2s;
 }
 
-.Resizer:hover {
-  transition: all 0.2s ease;
-  opacity: 0.5;
+[data-panel-resize-handle-id]:hover {
+  background-color: rgba(59, 130, 246, 0.3);
 }
 
-.Resizer.horizontal {
-  height: 11px;
-  margin: -5px 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  cursor: row-resize;
-  width: 100%;
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id] {
+  width: 1px;
+  margin: 0 -1px;
 }
 
-.Resizer.horizontal:hover {
-  border-top: 5px solid rgba(59, 130, 246, 0.5);
-  border-bottom: 5px solid rgba(59, 130, 246, 0.5);
+[data-panel-group-direction="vertical"] > [data-panel-resize-handle-id] {
+  height: 1px;
+  margin: -1px 0;
 }
 
-.Resizer.vertical {
-  width: 11px;
-  margin: 0 -5px;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  cursor: col-resize;
+/* Code editor overrides */
+.monaco-editor .margin {
+  @apply bg-editor-bg;
 }
 
-.Resizer.vertical:hover {
-  border-left: 5px solid rgba(59, 130, 246, 0.5);
-  border-right: 5px solid rgba(59, 130, 246, 0.5);
+.monaco-editor .minimap {
+  @apply opacity-70;
+}
+
+.monaco-editor .monaco-scrollable-element {
+  @apply shadow-none;
+}
+
+/* Make the scrollbar thinner and more subtle */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-editor-line rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/30;
+}
+
+/* Markdown rendering in chat */
+.chat-message h1 {
+  @apply text-xl font-bold mt-4 mb-2;
+}
+
+.chat-message h2 {
+  @apply text-lg font-bold mt-3 mb-2;
+}
+
+.chat-message h3 {
+  @apply text-base font-bold mt-2 mb-1;
+}
+
+.chat-message p {
+  @apply my-2;
+}
+
+.chat-message ul, .chat-message ol {
+  @apply pl-5 my-2;
+}
+
+.chat-message ul {
+  @apply list-disc;
+}
+
+.chat-message ol {
+  @apply list-decimal;
+}
+
+.chat-message pre {
+  @apply my-2 rounded-md overflow-auto;
+}
+
+.chat-message code {
+  @apply font-mono text-sm;
+}
+
+.chat-message p code {
+  @apply px-1 py-0.5 bg-editor-bg rounded;
+}
+
+.chat-message a {
+  @apply text-primary underline;
+}
+
+.chat-message blockquote {
+  @apply border-l-4 border-editor-line pl-3 italic my-2;
 }
