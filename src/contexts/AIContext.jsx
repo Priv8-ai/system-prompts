@@ -18,6 +18,7 @@ export const AIProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
+  const [providerErrors, setProviderErrors] = useState({});
 
   // Load available models from localStorage on component mount
   useEffect(() => {
@@ -94,10 +95,11 @@ export const AIProvider = ({ children }) => {
   const refreshModels = async () => {
     setIsLoading(true);
     setError(null);
+    setProviderErrors({});
     
     try {
       const models = [];
-      const failedProviders = [];
+      const errors = {};
       
       // Fetch models from each enabled provider
       for (const provider of modelProviders) {
@@ -106,27 +108,41 @@ export const AIProvider = ({ children }) => {
             const adapter = createAIModelAdapter(provider);
             const providerModels = await adapter.listModels();
             models.push(...providerModels);
+            
+            // Clear any previous errors for this provider
+            if (errors[provider.id]) {
+              delete errors[provider.id];
+            }
           } catch (err) {
             console.error(`Failed to fetch models from ${provider.name}:`, err);
-            failedProviders.push(provider.name);
+            errors[provider.id] = err.message;
           }
         }
       }
       
       setAvailableModels(models);
+      setProviderErrors(errors);
       
-      // Set first model as current if none selected
+      // Set first model as current if none selected and models are available
       if (!currentModel && models.length > 0) {
         setCurrentModel(models[0]);
       }
       
-      // Set error message if any providers failed
-      if (failedProviders.length > 0) {
-        setError(`Failed to fetch models from: ${failedProviders.join(', ')}`);
+      // Set a general error message if all enabled providers failed
+      const enabledProviders = modelProviders.filter(p => p.enabled);
+      const failedProviders = Object.keys(errors);
+      
+      if (enabledProviders.length > 0 && failedProviders.length === enabledProviders.length) {
+        setError('All enabled AI providers are currently unavailable. Please check your connections and try again.');
+      } else if (failedProviders.length > 0) {
+        const failedNames = failedProviders.map(id => 
+          modelProviders.find(p => p.id === id)?.name || id
+        );
+        setError(`Some providers are unavailable: ${failedNames.join(', ')}`);
       }
     } catch (err) {
       console.error('Error refreshing models:', err);
-      setError('Failed to refresh models. Check your connections and API keys.');
+      setError('Failed to refresh models. Please check your connections and API keys.');
     } finally {
       setIsLoading(false);
     }
@@ -140,6 +156,13 @@ export const AIProvider = ({ children }) => {
           : provider
       )
     );
+    
+    // Clear provider-specific errors when updating
+    setProviderErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[providerId];
+      return newErrors;
+    });
   };
 
   const sendMessage = async (message, systemPrompt = null, files = null) => {
@@ -201,6 +224,18 @@ export const AIProvider = ({ children }) => {
     setCurrentModel(model);
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
+  const clearProviderError = (providerId) => {
+    setProviderErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[providerId];
+      return newErrors;
+    });
+  };
+
   const value = {
     currentModel,
     availableModels,
@@ -208,11 +243,14 @@ export const AIProvider = ({ children }) => {
     isLoading,
     error,
     chatHistory,
+    providerErrors,
     refreshModels,
     updateProvider,
     sendMessage,
     clearChatHistory,
-    selectModel
+    selectModel,
+    clearError,
+    clearProviderError
   };
 
   return <AIContext.Provider value={value}>{children}</AIContext.Provider>;

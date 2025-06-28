@@ -23,7 +23,8 @@ class BaseAIAdapter {
   constructor(provider) {
     this.provider = provider;
     this.axios = axios.create({
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      timeout: 10000 // 10 second timeout
     });
   }
   
@@ -63,7 +64,14 @@ class OllamaAdapter extends BaseAIAdapter {
   
   async listModels() {
     try {
-      const response = await axios.get(`${this.baseUrl}/api/tags`);
+      const response = await axios.get(`${this.baseUrl}/api/tags`, {
+        timeout: 5000 // 5 second timeout for model listing
+      });
+      
+      if (!response.data || !response.data.models) {
+        throw new Error('Invalid response format from Ollama server');
+      }
+      
       return response.data.models.map(model => ({
         id: model.name,
         name: model.name,
@@ -72,7 +80,19 @@ class OllamaAdapter extends BaseAIAdapter {
       }));
     } catch (error) {
       console.error('Error listing Ollama models:', error);
-      throw new Error('Failed to list Ollama models: ' + (error.response?.data?.error || error.message));
+      
+      // Handle specific error cases
+      if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+        throw new Error('Ollama server is not running. Please start Ollama by running "ollama serve" in your terminal.');
+      } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+        throw new Error('Ollama server is not responding. Please check if Ollama is running properly.');
+      } else if (error.response?.status === 500) {
+        throw new Error('Ollama server encountered an internal error. Please check the Ollama server logs.');
+      } else if (error.response?.status === 404) {
+        throw new Error('Ollama API endpoint not found. Please check your Ollama installation.');
+      }
+      
+      throw new Error('Failed to connect to Ollama: ' + (error.response?.data?.error || error.message));
     }
   }
   
@@ -93,11 +113,30 @@ class OllamaAdapter extends BaseAIAdapter {
     // We could include file content in the messages if needed
     
     try {
-      const response = await axios.post(`${this.baseUrl}/api/chat`, payload);
+      const response = await axios.post(`${this.baseUrl}/api/chat`, payload, {
+        timeout: 30000 // 30 second timeout for chat responses
+      });
+      
+      if (!response.data || !response.data.message) {
+        throw new Error('Invalid response format from Ollama server');
+      }
+      
       return response.data.message.content;
     } catch (error) {
       console.error('Error generating response from Ollama:', error);
-      throw new Error('Failed to generate response: ' + (error.response?.data?.error || error.message));
+      
+      // Handle specific error cases
+      if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+        throw new Error('Ollama server is not running. Please start Ollama by running "ollama serve" in your terminal.');
+      } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+        throw new Error('Ollama server response timed out. The model might be loading or the request is too complex.');
+      } else if (error.response?.status === 500) {
+        throw new Error('Ollama server encountered an internal error. Please check the Ollama server logs.');
+      } else if (error.response?.status === 404) {
+        throw new Error(`Model "${modelId}" not found. Please check if the model is installed in Ollama.`);
+      }
+      
+      throw new Error('Failed to generate response from Ollama: ' + (error.response?.data?.error || error.message));
     }
   }
 }
@@ -141,6 +180,13 @@ class OpenAIAdapter extends BaseAIAdapter {
         }));
     } catch (error) {
       console.error('Error listing OpenAI models:', error);
+      
+      if (error.response?.status === 401) {
+        throw new Error('Invalid OpenAI API key. Please check your API key in settings.');
+      } else if (error.response?.status === 429) {
+        throw new Error('OpenAI API rate limit exceeded. Please try again later.');
+      }
+      
       throw new Error('Failed to list OpenAI models: ' + (error.response?.data?.error?.message || error.message));
     }
   }
@@ -169,6 +215,15 @@ class OpenAIAdapter extends BaseAIAdapter {
       return response.data.choices[0].message.content;
     } catch (error) {
       console.error('Error generating response from OpenAI:', error);
+      
+      if (error.response?.status === 401) {
+        throw new Error('Invalid OpenAI API key. Please check your API key in settings.');
+      } else if (error.response?.status === 429) {
+        throw new Error('OpenAI API rate limit exceeded. Please try again later.');
+      } else if (error.response?.status === 400) {
+        throw new Error('Invalid request to OpenAI API. Please check your input.');
+      }
+      
       throw new Error('Failed to generate response: ' + (error.response?.data?.error?.message || error.message));
     }
   }
@@ -238,6 +293,13 @@ class AnthropicAdapter extends BaseAIAdapter {
       return response.data.content[0].text;
     } catch (error) {
       console.error('Error generating response from Anthropic:', error);
+      
+      if (error.response?.status === 401) {
+        throw new Error('Invalid Anthropic API key. Please check your API key in settings.');
+      } else if (error.response?.status === 429) {
+        throw new Error('Anthropic API rate limit exceeded. Please try again later.');
+      }
+      
       throw new Error('Failed to generate response: ' + (error.response?.data?.error?.message || error.message));
     }
   }
@@ -300,6 +362,13 @@ class GeminiAdapter extends BaseAIAdapter {
       return response.data.candidates[0].content.parts[0].text;
     } catch (error) {
       console.error('Error generating response from Gemini:', error);
+      
+      if (error.response?.status === 400 && error.response?.data?.error?.message?.includes('API_KEY')) {
+        throw new Error('Invalid Google Gemini API key. Please check your API key in settings.');
+      } else if (error.response?.status === 429) {
+        throw new Error('Google Gemini API rate limit exceeded. Please try again later.');
+      }
+      
       throw new Error('Failed to generate response: ' + (error.response?.data?.error?.message || error.message));
     }
   }
@@ -348,6 +417,13 @@ class DeepSeekAdapter extends BaseAIAdapter {
       return response.data.choices[0].message.content;
     } catch (error) {
       console.error('Error generating response from DeepSeek:', error);
+      
+      if (error.response?.status === 401) {
+        throw new Error('Invalid DeepSeek API key. Please check your API key in settings.');
+      } else if (error.response?.status === 429) {
+        throw new Error('DeepSeek API rate limit exceeded. Please try again later.');
+      }
+      
       throw new Error('Failed to generate response: ' + (error.response?.data?.error?.message || error.message));
     }
   }
