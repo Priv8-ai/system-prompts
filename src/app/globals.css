@@ -1,0 +1,388 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #10b981;
+  --background: #0a0e1a;
+  --surface: #1a1f2e;
+  --surface-hover: #252b3d;
+  --surface-active: #2d3548;
+  --editor-bg: #0f1419;
+  --editor-text: #f8fafc;
+  --editor-line: #334155;
+  --editor-selection: rgba(59, 130, 246, 0.3);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border: #334155;
+  --border-light: #475569;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+body {
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#__next {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Enhanced scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--surface);
+}
+
+/* Panel resize handle styling */
+[data-panel-resize-handle-id] {
+  background-color: var(--border);
+  transition: all 0.2s ease;
+  opacity: 0.6;
+  width: 1px;
+}
+
+[data-panel-resize-handle-id]:hover {
+  background-color: var(--primary);
+  opacity: 1;
+  width: 3px;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id] {
+  width: 1px;
+  margin: 0;
+  cursor: col-resize;
+}
+
+[data-panel-group-direction="vertical"] > [data-panel-resize-handle-id] {
+  height: 1px;
+  margin: 0;
+  cursor: row-resize;
+}
+
+/* Monaco editor overrides */
+.monaco-editor .margin {
+  background: var(--editor-bg) !important;
+}
+
+.monaco-editor .minimap {
+  opacity: 0.7;
+}
+
+.monaco-editor .monaco-scrollable-element {
+  box-shadow: none !important;
+}
+
+/* Enhanced component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  
+  .btn-secondary {
+    @apply bg-surface hover:bg-surface-hover text-white font-medium px-4 py-2 rounded-lg border border-border transition-all duration-200;
+  }
+  
+  .btn-secondary:hover {
+    @apply border-border-light;
+    transform: translateY(-1px);
+  }
+  
+  .input-field {
+    @apply w-full p-3 bg-surface border border-border rounded-lg text-white placeholder-text-muted transition-all duration-200;
+    font-size: 14px;
+  }
+  
+  .input-field:focus {
+    @apply outline-none border-primary-500 ring-2 ring-primary-500/20;
+  }
+  
+  .input-field:hover {
+    @apply border-border-light;
+  }
+  
+  .card {
+    @apply bg-surface border border-border rounded-xl p-6 transition-all duration-200;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card:hover {
+    @apply border-border-light;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(12px);
+    background: rgba(26, 31, 46, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .gradient-border {
+    position: relative;
+    background: var(--surface);
+    border-radius: 12px;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+  }
+}
+
+/* Markdown rendering in chat */
+.chat-message {
+  line-height: 1.6;
+}
+
+.chat-message h1 {
+  @apply text-xl font-bold mt-4 mb-2 text-text-primary;
+}
+
+.chat-message h2 {
+  @apply text-lg font-bold mt-3 mb-2 text-text-primary;
+}
+
+.chat-message h3 {
+  @apply text-base font-bold mt-2 mb-1 text-text-primary;
+}
+
+.chat-message p {
+  @apply my-2 text-text-secondary;
+}
+
+.chat-message ul, .chat-message ol {
+  @apply pl-5 my-2 text-text-secondary;
+}
+
+.chat-message ul {
+  @apply list-disc;
+}
+
+.chat-message ol {
+  @apply list-decimal;
+}
+
+.chat-message pre {
+  @apply my-2 rounded-md overflow-auto bg-editor-bg border border-border;
+  padding: 1rem;
+}
+
+.chat-message code {
+  @apply font-mono text-sm;
+}
+
+.chat-message p code {
+  @apply px-2 py-1 bg-surface rounded text-primary-400;
+  font-size: 0.875em;
+}
+
+.chat-message a {
+  @apply text-primary-400 underline hover:text-primary-300 transition-colors;
+}
+
+.chat-message blockquote {
+  @apply border-l-4 border-primary-500 pl-4 italic my-2 text-text-muted bg-surface/50 py-2 rounded-r;
+}
+
+/* FileTree styling improvements */
+.filetree-folder {
+  @apply flex items-center py-2 px-3 hover:bg-surface/60 rounded-lg cursor-pointer transition-all duration-200;
+  margin: 1px 0;
+}
+
+.filetree-folder:hover {
+  @apply bg-surface-hover;
+}
+
+.filetree-folder-icon {
+  @apply mr-2 text-yellow-400;
+  font-size: 16px;
+}
+
+.filetree-folder-name {
+  @apply text-sm font-medium text-text-primary;
+}
+
+.filetree-chevron {
+  @apply text-text-muted transition-transform duration-200;
+  font-size: 14px;
+}
+
+.filetree-chevron-expanded {
+  @apply rotate-90;
+}
+
+.filetree-file {
+  @apply flex items-center py-2 px-3 ml-6 hover:bg-surface/60 rounded-lg cursor-pointer transition-all duration-200;
+  margin: 1px 0;
+}
+
+.filetree-file:hover {
+  @apply bg-surface-hover;
+}
+
+.filetree-file-icon {
+  @apply mr-2;
+  font-size: 16px;
+}
+
+.filetree-file-name {
+  @apply text-sm text-text-secondary;
+}
+
+.filetree-file:hover .filetree-file-name {
+  @apply text-text-primary;
+}
+
+.filetree-actions {
+  @apply ml-auto flex items-center opacity-0 transition-opacity duration-200;
+}
+
+.filetree-folder:hover .filetree-actions,
+.filetree-file:hover .filetree-actions {
+  @apply opacity-100;
+}
+
+.filetree-action-btn {
+  @apply p-1.5 rounded-md text-text-muted hover:text-primary-400 hover:bg-surface/60 transition-all duration-200;
+  font-size: 14px;
+}
+
+.filetree-action-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Navigation improvements */
+.nav-link {
+  @apply flex items-center px-4 py-2 rounded-lg transition-all duration-200 font-medium;
+}
+
+.nav-link:hover {
+  @apply bg-surface/80 text-text-primary;
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  @apply bg-primary-500/10 text-primary-400 border border-primary-500/20;
+}
+
+/* Error and success states */
+.error-message {
+  @apply bg-red-900/30 border border-red-700/30 rounded-lg p-4 text-red-300;
+}
+
+.success-message {
+  @apply bg-green-900/30 border border-green-700/30 rounded-lg p-4 text-green-300;
+}
+
+.warning-message {
+  @apply bg-yellow-900/30 border border-yellow-700/30 rounded-lg p-4 text-yellow-300;
+}
+
+/* Loading states */
+.loading-spinner {
+  @apply animate-spin text-primary-500;
+}
+
+/* Improved focus states */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  @apply outline-none ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background;
+}
+
+/* Smooth transitions for all interactive elements */
+button, input, select, textarea, .card, .nav-link {
+  transition: all 0.2s ease;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  @apply text-text-primary font-semibold;
+  line-height: 1.2;
+}
+
+p {
+  @apply text-text-secondary;
+}
+
+.text-muted {
+  @apply text-text-muted;
+}
+
+/* Layout improvements */
+.container {
+  @apply max-w-7xl mx-auto px-4;
+}
+
+.section-spacing {
+  @apply py-8;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .filetree-file {
+    @apply ml-4;
+  }
+  
+  .card {
+    @apply p-4;
+  }
+  
+  .nav-link {
+    @apply px-3 py-2;
+  }
+}
